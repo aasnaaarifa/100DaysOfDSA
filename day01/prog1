@@ -1,0 +1,25 @@
+/*Insert an Element in an Array
+Problem: Write a C program to insert an element x at a given 1-based position pos in an array of n integers. Shift existing elements to the right to make space.*/
+
+#include <stdio.h>
+int main() {
+    int n, position, x;
+    int a[100];
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+    printf("Enter the elements:\n");
+    for(int i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+    printf("Enter position where element is to be inserted: ");
+    scanf("%d", &position);
+    printf("Enter element to insert: ");
+    scanf("%d", &x);
+    for(int i = n; i >= position; i--)
+        a[i] = a[i - 1];
+    a[position - 1] = x;
+    printf("Updated array is:\n");
+    for(int i = 0; i <= n; i++)
+        printf("%d ", a[i]);
+    return 0;
+}
+
