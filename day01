@@ -11,7 +11,7 @@ int main() {
     for(int i = 0; i < n; i++)
         scanf("%d", &a[i]);
     printf("Enter position where element is to be inserted: ");
-    scanf("%d", &position);
+    scanf(/"%d", &position);
     printf("Enter element to insert: ");
     scanf("%d", &x);
     for(int i = n; i >= position; i--)
