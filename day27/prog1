@@ -1,0 +1,98 @@
+Problem: Find Intersection Point of Two Linked Lists - Implement using linked list with dynamic memory allocation.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int getLength(struct Node* head) {
+    int len = 0;
+    while(head != NULL) {
+        len++;
+        head = head->next;
+    }
+    return len;
+}
+
+int main() {
+    int n, m, value;
+
+    struct Node *head1 = NULL, *head2 = NULL;
+    struct Node *temp = NULL, *newNode;
+
+    printf("Enter number of nodes in first list: ");
+    scanf("%d", &n);
+
+    printf("Enter %d elements:\n", n);
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &value);
+
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = value;
+        newNode->next = NULL;
+
+        if(head1 == NULL) {
+            head1 = newNode;
+            temp = head1;
+        } else {
+            temp->next = newNode;
+            temp = newNode;
+        }
+    }
+
+    printf("Enter number of nodes in second list: ");
+    scanf("%d", &m);
+
+    printf("Enter %d elements:\n", m);
+    for(int i = 0; i < m; i++) {
+        scanf("%d", &value);
+
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = value;
+        newNode->next = NULL;
+
+        if(head2 == NULL) {
+            head2 = newNode;
+            temp = head2;
+        } else {
+            temp->next = newNode;
+            temp = newNode;
+        }
+    }
+
+    int len1 = getLength(head1);
+    int len2 = getLength(head2);
+
+    struct Node *p1 = head1;
+    struct Node *p2 = head2;
+
+    int diff = abs(len1 - len2);
+
+    if(len1 > len2) {
+        for(int i = 0; i < diff; i++)
+            p1 = p1->next;
+    } else {
+        for(int i = 0; i < diff; i++)
+            p2 = p2->next;
+    }
+
+    int found = 0;
+
+    while(p1 != NULL && p2 != NULL) {
+        if(p1->data == p2->data) {
+            printf("Intersection at: %d\n", p1->data);
+            found = 1;
+            break;
+        }
+        p1 = p1->next;
+        p2 = p2->next;
+    }
+
+    if(!found)
+        printf("No Intersection\n");
+
+    return 0;
+}
