@@ -1,0 +1,89 @@
+//Problem: Convert an infix expression to postfix notation using stack.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char *arr;
+    int top;
+    int capacity;
+} Stack;
+
+Stack* createStack(int size) {
+    Stack* stack = (Stack*)malloc(sizeof(Stack));
+    stack->arr = (char*)malloc(size * sizeof(char));
+    stack->top = -1;
+    stack->capacity = size;
+    return stack;
+}
+
+int isEmpty(Stack* stack) {
+    return stack->top == -1;
+}
+
+void push(Stack* stack, char ch) {
+    if(stack->top < stack->capacity - 1) {
+        stack->arr[++stack->top] = ch;
+    } else {
+        printf("Stack Overflow\n");
+    }
+}
+
+char pop(Stack* stack) {
+    if(isEmpty(stack)) return '\0';
+    return stack->arr[stack->top--];
+}
+
+char peek(Stack* stack) {
+    if(isEmpty(stack)) return '\0';
+    return stack->arr[stack->top];
+}
+
+int precedence(char op) {
+    if(op == '+' || op == '-') return 1;
+    if(op == '*' || op == '/') return 2;
+    return 0;
+}
+
+void infixToPostfix(char* exp) {
+    int len = strlen(exp);
+    Stack* stack = createStack(len);
+    char result[100];
+    int k = 0;
+
+    for(int i = 0; i < len; i++) {
+        char ch = exp[i];
+        if(isalnum(ch)) { 
+            result[k++] = ch;
+        } else if(ch == '(') {
+            push(stack, ch);
+        } else if(ch == ')') {
+            while(!isEmpty(stack) && peek(stack) != '(')
+                result[k++] = pop(stack);
+            pop(stack); 
+        } else {
+            while(!isEmpty(stack) && precedence(peek(stack)) >= precedence(ch))
+                result[k++] = pop(stack);
+            push(stack, ch);
+        }
+    }
+
+    while(!isEmpty(stack))
+        result[k++] = pop(stack);
+
+    result[k] = '\0';
+    printf("Postfix expression: %s\n", result);
+
+    free(stack->arr);
+    free(stack);
+}
+
+int main() {
+    char exp[100];
+    printf("Enter infix expression: ");
+    scanf("%s", exp);
+    infixToPostfix(exp);
+    return 0;
+}

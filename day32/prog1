@@ -1,0 +1,81 @@
+Problem: Implement push and pop operations on a stack and verify stack operations.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *arr;
+    int top;
+    int capacity;
+} Stack;
+
+Stack* createStack(int size) {
+    Stack* stack = (Stack*)malloc(sizeof(Stack));
+    stack->arr = (int*)malloc(size * sizeof(int));
+    stack->top = -1;
+    stack->capacity = size;
+    return stack;
+}
+
+void push(Stack* stack, int value) {
+    if(stack->top < stack->capacity - 1) {
+        stack->arr[++stack->top] = value;
+        printf("Pushed %d\n", value);
+    } else {
+        printf("Stack Overflow\n");
+    }
+}
+
+void pop(Stack* stack) {
+    if(stack->top == -1) {
+        printf("Stack Underflow\n");
+    } else {
+        printf("Popped %d\n", stack->arr[stack->top--]);
+    }
+}
+
+void display(Stack* stack) {
+    if(stack->top == -1) {
+        printf("Stack is empty\n");
+        return;
+    }
+    printf("Stack elements (top to bottom): ");
+    for(int i = stack->top; i >= 0; i--) {
+        printf("%d ", stack->arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int capacity;
+    printf("Enter stack capacity: ");
+    scanf("%d", &capacity);
+
+    Stack* stack = createStack(capacity);
+
+    char command[20];
+    int value;
+
+    while(1) {
+        printf("Enter command (push x / pop / display / exit): ");
+        scanf("%s", command);
+
+        if(strcmp(command, "push") == 0) {
+            scanf("%d", &value);
+            push(stack, value);
+        } else if(strcmp(command, "pop") == 0) {
+            pop(stack);
+        } else if(strcmp(command, "display") == 0) {
+            display(stack);
+        } else if(strcmp(command, "exit") == 0) {
+            break;
+        } else {
+            printf("Invalid command\n");
+        }
+    }
+
+    free(stack->arr);
+    free(stack);
+    return 0;
+}
