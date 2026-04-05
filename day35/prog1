@@ -1,0 +1,90 @@
+//Problem: Queue Using Array - Implement using linked list with dynamic memory allocation.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct Queue {
+    Node* front;
+    Node* rear;
+} Queue;
+
+Queue* createQueue() {
+    Queue* q = (Queue*)malloc(sizeof(Queue));
+    q->front = q->rear = NULL;
+    return q;
+}
+
+void enqueue(Queue* q, int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    if (q->rear == NULL) {
+        q->front = q->rear = newNode;
+        return;
+    }
+    q->rear->next = newNode;
+    q->rear = newNode;
+}
+
+int dequeue(Queue* q) {
+    if (q->front == NULL) return -1;
+    Node* temp = q->front;
+    int val = temp->data;
+    q->front = q->front->next;
+    if (q->front == NULL) q->rear = NULL;
+    free(temp);
+    return val;
+}
+
+void displayQueue(Queue* q) {
+    Node* temp = q->front;
+    if (!temp) {
+        printf("Queue is empty\n");
+        return;
+    }
+    while (temp) {
+        printf("%d", temp->data);
+        if (temp->next) printf(" ");
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Queue* q = createQueue();
+    int choice, value;
+
+    while (1) {
+        printf("\n1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\nChoose an option: ");
+        scanf("%d", &choice);
+
+        if (choice == 1) {
+            printf("Enter value to enqueue: ");
+            scanf("%d", &value);
+            enqueue(q, value);
+            printf("%d enqueued.\n", value);
+        } else if (choice == 2) {
+            int removed = dequeue(q);
+            if (removed == -1)
+                printf("Queue is empty.\n");
+            else
+                printf("Dequeued: %d\n", removed);
+        } else if (choice == 3) {
+            printf("Queue: ");
+            displayQueue(q);
+        } else if (choice == 4) {
+            break;
+        } else {
+            printf("Invalid option. Try again.\n");
+        }
+    }
+
+    while (q->front) dequeue(q);
+    free(q);
+    return 0;
+}

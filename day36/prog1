@@ -1,0 +1,98 @@
+//Problem: Circular Queue Using Array - Implement using linked list with dynamic memory allocation.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct CircularQueue {
+    Node* front;
+    Node* rear;
+    int size;
+} CircularQueue;
+
+CircularQueue* createQueue() {
+    CircularQueue* q = (CircularQueue*)malloc(sizeof(CircularQueue));
+    q->front = q->rear = NULL;
+    q->size = 0;
+    return q;
+}
+
+void enqueue(CircularQueue* q, int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    if (!q->front) {
+        q->front = q->rear = newNode;
+        newNode->next = q->front;
+    } else {
+        q->rear->next = newNode;
+        q->rear = newNode;
+        q->rear->next = q->front;
+    }
+    q->size++;
+    printf("%d enqueued.\n", value);
+}
+
+void dequeue(CircularQueue* q) {
+    if (!q->front) {
+        printf("Queue is empty.\n");
+        return;
+    }
+    Node* temp = q->front;
+    if (q->front == q->rear) {
+        q->front = q->rear = NULL;
+    } else {
+        q->front = q->front->next;
+        q->rear->next = q->front;
+    }
+    printf("%d dequeued.\n", temp->data);
+    free(temp);
+    q->size--;
+}
+
+void displayQueue(CircularQueue* q) {
+    if (!q->front) {
+        printf("Queue is empty.\n");
+        return;
+    }
+    Node* temp = q->front;
+    for (int i = 0; i < q->size; i++) {
+        printf("%d", temp->data);
+        if (i != q->size - 1) printf(" ");
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    CircularQueue* q = createQueue();
+    int choice, value;
+
+    while (1) {
+        printf("\n1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\nChoose an option: ");
+        scanf("%d", &choice);
+
+        if (choice == 1) {
+            printf("Enter value to enqueue: ");
+            scanf("%d", &value);
+            enqueue(q, value);
+        } else if (choice == 2) {
+            dequeue(q);
+        } else if (choice == 3) {
+            printf("Queue: ");
+            displayQueue(q);
+        } else if (choice == 4) {
+            break;
+        } else {
+            printf("Invalid option. Try again.\n");
+        }
+    }
+
+    while (q->size) dequeue(q);
+    free(q);
+    return 0;
+}

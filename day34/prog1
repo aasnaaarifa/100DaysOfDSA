@@ -1,0 +1,61 @@
+//Problem: Evaluate Postfix Expression - Implement using linked list with dynamic memory allocation.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* push(Node* top, int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = value;
+    newNode->next = top;
+    return newNode;
+}
+
+Node* pop(Node** top) {
+    if (*top == NULL) return NULL;
+    Node* temp = *top;
+    *top = (*top)->next;
+    return temp;
+}
+
+int peek(Node* top) {
+    return top->data;
+}
+
+int main() {
+    char expr[1000];
+    Node* stack = NULL;
+    printf("Enter postfix expression (space separated): ");
+    fgets(expr, sizeof(expr), stdin);
+    expr[strcspn(expr, "\n")] = 0;
+
+    char* token = strtok(expr, " ");
+    while (token) {
+        if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+            int num = atoi(token);
+            stack = push(stack, num);
+        } else {
+            Node* b = pop(&stack);
+            Node* a = pop(&stack);
+            int res = 0;
+            if (token[0] == '+') res = a->data + b->data;
+            else if (token[0] == '-') res = a->data - b->data;
+            else if (token[0] == '*') res = a->data * b->data;
+            else if (token[0] == '/') res = a->data / b->data;
+            free(a);
+            free(b);
+            stack = push(stack, res);
+        }
+        token = strtok(NULL, " ");
+    }
+
+    printf("%d\n", peek(stack));
+    free(stack);
+    return 0;
+}
