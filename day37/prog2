@@ -1,0 +1,74 @@
+#include <stdlib.h>
+
+typedef struct {
+    int* heap;
+    int size;
+    int capacity;
+} KthLargest;
+
+void swap(int* a, int* b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void heapifyUp(KthLargest* obj, int index) {
+    if (index == 0) return;
+    int parent = (index - 1) / 2;
+    if (obj->heap[parent] > obj->heap[index]) {
+        swap(&obj->heap[parent], &obj->heap[index]);
+        heapifyUp(obj, parent);
+    }
+}
+
+void heapifyDown(KthLargest* obj, int index) {
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+    int smallest = index;
+
+    if (left < obj->size && obj->heap[left] < obj->heap[smallest])
+        smallest = left;
+    if (right < obj->size && obj->heap[right] < obj->heap[smallest])
+        smallest = right;
+    if (smallest != index) {
+        swap(&obj->heap[smallest], &obj->heap[index]);
+        heapifyDown(obj, smallest);
+    }
+}
+
+/** Initialize KthLargest object */
+KthLargest* kthLargestCreate(int k, int* nums, int numsSize) {
+    KthLargest* obj = (KthLargest*)malloc(sizeof(KthLargest));
+    obj->heap = (int*)malloc(sizeof(int) * k);
+    obj->size = 0;
+    obj->capacity = k;
+
+    for (int i = 0; i < numsSize; i++) {
+        if (obj->size < k) {
+            obj->heap[obj->size++] = nums[i];
+            heapifyUp(obj, obj->size - 1);
+        } else if (nums[i] > obj->heap[0]) {
+            obj->heap[0] = nums[i];
+            heapifyDown(obj, 0);
+        }
+    }
+    return obj;
+}
+
+/** Add a value and return the kth largest element */
+int kthLargestAdd(KthLargest* obj, int val) {
+    if (obj->size < obj->capacity) {
+        obj->heap[obj->size++] = val;
+        heapifyUp(obj, obj->size - 1);
+    } else if (val > obj->heap[0]) {
+        obj->heap[0] = val;
+        heapifyDown(obj, 0);
+    }
+    return obj->heap[0];
+}
+
+/** Free memory */
+void kthLargestFree(KthLargest* obj) {
+    free(obj->heap);
+    free(obj);
+}
