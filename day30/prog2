@@ -1,0 +1,47 @@
+struct ListNode* reverse(struct ListNode* head){
+    struct ListNode* prev = NULL;
+    struct ListNode* curr = head;
+    
+    while(curr){
+        struct ListNode* next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    
+    return prev;
+}
+
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    
+    // Reverse both lists
+    l1 = reverse(l1);
+    l2 = reverse(l2);
+
+    int carry = 0;
+    struct ListNode* head = NULL;
+
+    while(l1 || l2 || carry){
+        
+        int sum = carry;
+
+        if(l1){
+            sum += l1->val;
+            l1 = l1->next;
+        }
+
+        if(l2){
+            sum += l2->val;
+            l2 = l2->next;
+        }
+
+        struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+        node->val = sum % 10;
+        node->next = head;
+        head = node;
+
+        carry = sum / 10;
+    }
+
+    return head;
+}
