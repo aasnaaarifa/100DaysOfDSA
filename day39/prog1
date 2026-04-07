@@ -1,0 +1,84 @@
+//Problem Statement:Implement a Min Heap using an array where the smallest element is always at the root.
+
+
+#include <stdio.h>
+#include <string.h>
+#define MAX 100
+int heap[MAX];
+int size = 0;
+void insert(int x){
+    int i = size;
+    heap[i] = x;
+    size++;
+    while(i > 0 && heap[(i-1)/2] > heap[i]){
+        int temp = heap[i];
+        heap[i] = heap[(i-1)/2];
+        heap[(i-1)/2] = temp;
+        i = (i-1)/2;
+    }
+}
+void heapifyDown(){
+    int i = 0;
+    while(1){
+        int left = 2*i + 1;
+        int right = 2*i + 2;
+        int smallest = i;
+        if(left < size && heap[left] < heap[smallest])
+            smallest = left;
+        if(right < size && heap[right] < heap[smallest])
+            smallest = right;
+        if(smallest != i){
+            int temp = heap[i];
+            heap[i] = heap[smallest];
+            heap[smallest] = temp;
+            i = smallest;
+        }
+        else
+            break;
+    }
+}
+void extractMin(){
+    if(size == 0){
+        printf("-1\n");
+        return;
+    }
+    printf("%d\n", heap[0]);
+    heap[0] = heap[size-1];
+    size--;
+    heapifyDown();
+}
+void peek(){
+    if(size == 0)
+        printf("-1\n");
+    else
+        printf("%d\n", heap[0]);
+}
+int main(){
+    int n,x;
+    char op[20];
+    printf("Min Heap Operations\n");
+    printf("insert x  -> Insert element\n");
+    printf("extractMin -> Remove and print minimum\n");
+    printf("peek -> Show minimum element\n\n");
+    printf("Enter number of operations: ");
+    scanf("%d",&n);
+    for(int i=0;i<n;i++){
+        printf("Enter operation: ");
+        scanf("%s",op);
+        if(strcmp(op,"insert")==0){
+            scanf("%d",&x);
+            insert(x);
+        }
+        else if(strcmp(op,"extractMin")==0){
+            extractMin();
+        }
+        else if(strcmp(op,"peek")==0){
+            peek();
+        }
+        else{
+            printf("Invalid operation\n");
+        }
+    }
+
+    return 0;
+}

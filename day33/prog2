@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int evalRPN(char ** tokens, int tokensSize){
+    int *stack = (int*)malloc(tokensSize * sizeof(int));
+    int top = -1;
+
+    for(int i = 0; i < tokensSize; i++){
+        char *tok = tokens[i];
+        if(strcmp(tok, "+") == 0 || strcmp(tok, "-") == 0 || strcmp(tok, "*") == 0 || strcmp(tok, "/") == 0){
+            int b = stack[top--];
+            int a = stack[top--];
+            if(strcmp(tok, "+") == 0) stack[++top] = a + b;
+            else if(strcmp(tok, "-") == 0) stack[++top] = a - b;
+            else if(strcmp(tok, "*") == 0) stack[++top] = a * b;
+            else if(strcmp(tok, "/") == 0) stack[++top] = a / b;
+        } else {
+            stack[++top] = atoi(tok);
+        }
+    }
+
+    int result = stack[top];
+    free(stack);
+    return result;
+}
