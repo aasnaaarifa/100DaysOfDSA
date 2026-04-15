@@ -1,0 +1,101 @@
+//Problem Statement:Find the Lowest Common Ancestor (LCA) of two nodes in a Binary Tree.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+struct Node* buildTree(int arr[], int n) {
+    if (n == 0 || arr[0] == -1)
+        return NULL;
+
+    struct Node* root = createNode(arr[0]);
+    struct Node* queue[n];
+    int front = 0, rear = 0;
+    queue[rear++] = root;
+
+    int i = 1;
+    while (i < n) {
+        struct Node* current = queue[front++];
+
+        if (i < n && arr[i] != -1) {
+            current->left = createNode(arr[i]);
+            queue[rear++] = current->left;
+        }
+        i++;
+
+        if (i < n && arr[i] != -1) {
+            current->right = createNode(arr[i]);
+            queue[rear++] = current->right;
+        }
+        i++;
+    }
+
+    return root;
+}
+
+struct Node* findNode(struct Node* root, int value) {
+    if (root == NULL)
+        return NULL;
+
+    if (root->data == value)
+        return root;
+
+    struct Node* leftResult = findNode(root->left, value);
+    if (leftResult != NULL)
+        return leftResult;
+
+    return findNode(root->right, value);
+}
+
+struct Node* findLCA(struct Node* root, struct Node* p, struct Node* q) {
+    if (root == NULL || root == p || root == q)
+        return root;
+
+    struct Node* leftLCA = findLCA(root->left, p, q);
+    struct Node* rightLCA = findLCA(root->right, p, q);
+
+    if (leftLCA != NULL && rightLCA != NULL)
+        return root;
+
+    if (leftLCA != NULL)
+        return leftLCA;
+
+    return rightLCA;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    int x, y;
+    scanf("%d %d", &x, &y);
+
+    struct Node* root = buildTree(arr, n);
+    struct Node* p = findNode(root, x);
+    struct Node* q = findNode(root, y);
+
+    struct Node* lca = findLCA(root, p, q);
+
+    if (lca != NULL)
+        printf("%d\n", lca->data);
+
+    return 0;
+}
