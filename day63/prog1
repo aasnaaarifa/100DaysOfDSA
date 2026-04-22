@@ -1,0 +1,44 @@
+//Problem: Perform DFS starting from a given source vertex using recursion.
+
+#include <stdio.h>
+
+int graph[100][100];
+int visited[100];
+int n;
+
+void dfs(int vertex) {
+    visited[vertex] = 1;
+    printf("%d ", vertex);
+
+    for (int i = 0; i < n; i++) {
+        if (graph[vertex][i] == 1 && visited[i] == 0) {
+            dfs(i);
+        }
+    }
+}
+
+int main() {
+    int m, u, v, s;
+
+    scanf("%d", &n);
+    scanf("%d", &m);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            graph[i][j] = 0;
+        }
+        visited[i] = 0;
+    }
+
+    for (int i = 0; i < m; i++) {
+        scanf("%d %d", &u, &v);
+        graph[u][v] = 1;
+        graph[v][u] = 1;
+    }
+
+    scanf("%d", &s);
+
+    dfs(s);
+
+    return 0;
+}

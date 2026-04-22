@@ -1,0 +1,31 @@
+void fill(int** image, int imageSize, int imageColSize, int sr, int sc, int oldColor, int newColor) {
+    if (sr < 0 || sr >= imageSize || sc < 0 || sc >= imageColSize) {
+        return;
+    }
+
+    if (image[sr][sc] != oldColor) {
+        return;
+    }
+
+    image[sr][sc] = newColor;
+
+    fill(image, imageSize, imageColSize, sr - 1, sc, oldColor, newColor);
+    fill(image, imageSize, imageColSize, sr + 1, sc, oldColor, newColor);
+    fill(image, imageSize, imageColSize, sr, sc - 1, oldColor, newColor);
+    fill(image, imageSize, imageColSize, sr, sc + 1, oldColor, newColor);
+}
+
+int** floodFill(int** image, int imageSize, int* imageColSize, int sr, int sc, int color, int* returnSize, int** returnColumnSizes) {
+    int oldColor = image[sr][sc];
+
+    *returnSize = imageSize;
+    *returnColumnSizes = imageColSize;
+
+    if (oldColor == color) {
+        return image;
+    }
+
+    fill(image, imageSize, imageColSize[0], sr, sc, oldColor, color);
+
+    return image;
+}
