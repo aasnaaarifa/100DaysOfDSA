@@ -1,0 +1,72 @@
+bool dfs(int node, int** adj, int* adjSize, int* visited, int* pathVisited) {
+    visited[node] = 1;
+    pathVisited[node] = 1;
+
+    for (int i = 0; i < adjSize[node]; i++) {
+        int neighbor = adj[node][i];
+
+        if (!visited[neighbor]) {
+            if (dfs(neighbor, adj, adjSize, visited, pathVisited)) {
+                return true;
+            }
+        } else if (pathVisited[neighbor]) {
+            return true;
+        }
+    }
+
+    pathVisited[node] = 0;
+    return false;
+}
+
+bool canFinish(int numCourses, int** prerequisites, int prerequisitesSize, int* prerequisitesColSize) {
+    int* adjSize = (int*)calloc(numCourses, sizeof(int));
+
+    for (int i = 0; i < prerequisitesSize; i++) {
+        int a = prerequisites[i][0];
+        int b = prerequisites[i][1];
+        adjSize[b]++;
+    }
+
+    int** adj = (int**)malloc(numCourses * sizeof(int*));
+    for (int i = 0; i < numCourses; i++) {
+        adj[i] = (int*)malloc(adjSize[i] * sizeof(int));
+    }
+
+    int* index = (int*)calloc(numCourses, sizeof(int));
+
+    for (int i = 0; i < prerequisitesSize; i++) {
+        int a = prerequisites[i][0];
+        int b = prerequisites[i][1];
+        adj[b][index[b]++] = a;
+    }
+
+    int* visited = (int*)calloc(numCourses, sizeof(int));
+    int* pathVisited = (int*)calloc(numCourses, sizeof(int));
+
+    for (int i = 0; i < numCourses; i++) {
+        if (!visited[i]) {
+            if (dfs(i, adj, adjSize, visited, pathVisited)) {
+                for (int j = 0; j < numCourses; j++) {
+                    free(adj[j]);
+                }
+                free(adj);
+                free(adjSize);
+                free(index);
+                free(visited);
+                free(pathVisited);
+                return false;
+            }
+        }
+    }
+
+    for (int j = 0; j < numCourses; j++) {
+        free(adj[j]);
+    }
+    free(adj);
+    free(adjSize);
+    free(index);
+    free(visited);
+    free(pathVisited);
+
+    return true;
+}
