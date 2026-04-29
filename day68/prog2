@@ -1,0 +1,89 @@
+class Solution {
+public:
+    string findOrder(vector<string> &words) {
+        vector<vector<int>> graph(26);
+        vector<int> indegree(26, 0);
+        vector<int> present(26, 0);
+
+        int countLetters = 0;
+
+        for (string word : words) {
+            for (char ch : word) {
+                if (present[ch - 'a'] == 0) {
+                    present[ch - 'a'] = 1;
+                    countLetters++;
+                }
+            }
+        }
+
+        for (int i = 0; i < words.size() - 1; i++) {
+            string word1 = words[i];
+            string word2 = words[i + 1];
+
+            int len1 = word1.length();
+            int len2 = word2.length();
+            int minLen = min(len1, len2);
+
+            bool foundDifference = false;
+
+            for (int j = 0; j < minLen; j++) {
+                if (word1[j] != word2[j]) {
+                    int u = word1[j] - 'a';
+                    int v = word2[j] - 'a';
+
+                    bool alreadyPresent = false;
+
+                    for (int x : graph[u]) {
+                        if (x == v) {
+                            alreadyPresent = true;
+                            break;
+                        }
+                    }
+
+                    if (!alreadyPresent) {
+                        graph[u].push_back(v);
+                        indegree[v]++;
+                    }
+
+                    foundDifference = true;
+                    break;
+                }
+            }
+
+            if (!foundDifference && len1 > len2) {
+                return "";
+            }
+        }
+
+        queue<int> q;
+
+        for (int i = 0; i < 26; i++) {
+            if (present[i] == 1 && indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+
+        string ans = "";
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+
+            ans += char(node + 'a');
+
+            for (int next : graph[node]) {
+                indegree[next]--;
+
+                if (indegree[next] == 0) {
+                    q.push(next);
+                }
+            }
+        }
+
+        if (ans.length() != countLetters) {
+            return "";
+        }
+
+        return ans;
+    }
+};
