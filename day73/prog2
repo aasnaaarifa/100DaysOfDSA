@@ -1,0 +1,37 @@
+int findParent(int parent[], int x) {
+    if (parent[x] == x) {
+        return x;
+    }
+
+    parent[x] = findParent(parent, parent[x]);
+    return parent[x];
+}
+
+int* findRedundantConnection(int** edges, int edgesSize, int* edgesColSize, int* returnSize) {
+    int parent[1001];
+
+    for (int i = 0; i <= edgesSize; i++) {
+        parent[i] = i;
+    }
+
+    for (int i = 0; i < edgesSize; i++) {
+        int u = edges[i][0];
+        int v = edges[i][1];
+
+        int parentU = findParent(parent, u);
+        int parentV = findParent(parent, v);
+
+        if (parentU == parentV) {
+            int* ans = (int*)malloc(2 * sizeof(int));
+            ans[0] = u;
+            ans[1] = v;
+            *returnSize = 2;
+            return ans;
+        }
+
+        parent[parentU] = parentV;
+    }
+
+    *returnSize = 0;
+    return NULL;
+}
